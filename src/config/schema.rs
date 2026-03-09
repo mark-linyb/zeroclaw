@@ -6741,7 +6741,10 @@ async fn remove_active_workspace_marker(marker_root: &Path) -> Result<()> {
     })?;
 
     if marker_root.exists() {
+        #[cfg(unix)]
         sync_directory(marker_root).await?;
+        #[cfg(not(unix))]
+        sync_directory(marker_root)?;
     }
     Ok(())
 }
@@ -6780,7 +6783,10 @@ async fn write_active_workspace_marker(marker_root: &Path, config_dir: &Path) ->
         );
     }
 
+    #[cfg(unix)]
     sync_directory(marker_root).await?;
+    #[cfg(not(unix))]
+    sync_directory(marker_root)?;
     Ok(())
 }
 
